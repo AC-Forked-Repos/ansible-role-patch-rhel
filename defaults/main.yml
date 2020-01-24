@@ -1,0 +1,41 @@
+---
+# defaults file for patch-rhel
+
+patch_rhel_ensure_versionlock: True
+
+# yum command settings
+patch_rhel_update_cache: True
+patch_rhel_security: True
+patch_rhel_bugfix: True
+
+# patch_rhel_exclude_list: kernel* # kernel*,foo*
+
+patch_rhel_autoremove: True
+
+patch_rhel_generate_reports: False
+patch_rhel_notify_reports: False
+
+# patch_rhel_versionlock_packages:
+  #  - <package_name>
+
+patch_rhel_notify_slack: False
+# patch_rhel_slack_token: ""
+
+patch_rhel_notify_email: False
+# patch_rhel_email_notify_host: email-smtp.eu-west-1.amazonaws.com
+# patch_rhel_email_notify_server_port: "465"
+# patch_rhel_email_notify_server_username: ""
+# patch_rhel_email_notify_server_password: ""
+# patch_rhel_email_notify_from: reporting@imeweb.io
+# patch_rhel_email_notify_to: fc@hyperd.sh
+# patch_rhel_email_notify_cc: fc@hyperd.sh
+# patch_rhel_email_notify_subject: "IME Digital Ocean - Infra Patching Report"
+# patch_rhel_email_notify_server_secure: starttls
+
+patch_rhel_custom_hook: False
+# patch_rhel_custom_hook_url: ""
+# patch_rhel_custom_hook_token: ""
+# patch_rhel_custom_hook_method: POST
+# patch_rhel_custom_hook_body_format: json
+# patch_rhel_custom_hook_content_type: "application/json"
+# patch_rhel_custom_hook_expected_status_code: 200

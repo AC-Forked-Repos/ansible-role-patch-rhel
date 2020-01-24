@@ -1,0 +1,140 @@
+---
+# tasks file for patch-rhel
+
+- name: Ensure that yum-plugin-versionlock is installed
+  yum:
+    name: yum-plugin-versionlock
+    state: present
+  when:
+    - patch_rhel_ensure_versionlock | bool
+
+- name: Honour package version pinning via yum-plugin-versionlock
+  command: yum versionlock {{ package }}
+  args:
+    warn: False
+  loop: "{{ patch_rhel_versionlock_packages }}"
+  loop_control:
+    loop_var: package
+  when:
+    - patch_rhel_versionlock_packages is defined
+
+# Applies only security patches and bug fixes
+- name: Patch all the packages
+  yum:
+    name: "*"
+    state: latest
+    exclude: "{{ patch_rhel_exclude_list | default('') }}"
+    update_cache: "{{ patch_rhel_update_cache | bool | default(True) }}"
+    security: "{{ patch_rhel_security | bool | default(True) }}"
+    bugfix: "{{ patch_rhel_bugfix | bool | default(True) }}"
+  register: patch_rhel_packages_patched
+  tags:
+    - skip_ansible_lint
+
+# If True, removes all "leaf" packages from the system that were originally installed as dependencies
+# of user-installed packages but which are no longer required by any such package.
+- name: Remove all leaf packages
+  yum:
+    autoremove: Yes
+  when:
+    - patch_rhel_autoremove | bool
+
+- name: Determine if a reboot is required
+  command: needs-restarting -r
+  register: patch_rhel_needs_restarting
+  changed_when:
+    - patch_rhel_needs_restarting.rc != 0
+  failed_when:
+    - patch_rhel_needs_restarting.rc != 1
+    - patch_rhel_needs_restarting.rc != 0
+  become: False
+
+- name: Generate reports
+  block:
+    - name: Get a list of all bugzillas that are fixed for all the packages patched
+      command: yum updateinfo list bugzillas
+      changed_when: False
+      args:
+        warn: False
+      register: patch_rhel_updateinfo_list_bugzillas
+
+    - name: Get a summary of advisories not yet installed
+      command: yum updateinfo summary
+      changed_when: False
+      args:
+        warn: False
+      register: patch_rhel_updateinfo_summary
+  become: False
+  when:
+    - patch_rhel_generate_reports | bool
+
+- name: Notify reports
+  block:
+    - name: Report formatting
+      set_fact:
+        patch_rhel_report: |
+          Host: {{ ansible_hostname }}
+          {{ patch_rhel_needs_restarting.stdout }}
+
+          List all bugzillas fixed:
+          {{ patch_rhel_updateinfo_list_bugzillas.stdout }}
+
+          Summary of advisories not yet installed:
+          {{ patch_rhel_updateinfo_summary.stdout }}
+
+    - name: Report formatting (json payload friendly)
+      set_fact:
+        patch_rhel_report_polished: "{{ lookup('vars', 'patch_rhel_report') | replace('\n', ' - ') }}"
+
+    - name: Send report to Slack
+      slack:
+        token: "{{ patch_rhel_slack_token }}"
+        msg: "{{ patch_rhel_report }}"
+      when:
+        - patch_rhel_notify_slack
+        - patch_rhel_slack_token is defined
+
+    - name: Send report via e-mail
+      mail:
+        host: "{{ patch_rhel_email_notify_host }}"
+        port: "{{ patch_rhel_email_notify_server_port }}"
+        username: "{{ patch_rhel_email_notify_server_username }}"
+        password: "{{ patch_rhel_email_notify_server_password }}"
+        from: "{{ patch_rhel_email_notify_from }}"
+        to: "{{ patch_rhel_email_notify_to }}"
+        cc: "{{ patch_rhel_email_notify_cc | default('') }}"
+        subject: "{{ patch_rhel_email_notify_subject }}"
+        body: "{{ patch_rhel_report }} for {{ ansible_hostname }}"
+        secure: "{{ patch_rhel_email_notify_server_secure }}"
+      when:
+        - patch_rhel_notify_email
+        - patch_rhel_email_notify_host is defined
+        - patch_rhel_email_notify_server_port is defined
+        - patch_rhel_email_notify_server_username is defined
+        - patch_rhel_email_notify_server_password is defined
+        - patch_rhel_email_notify_from is defined
+        - patch_rhel_email_notify_to is defined
+        - not patch_rhel_email_notify_server_secure == 'never'
+
+    - name: Notify a custom webhook
+      uri:
+        url: "{{ patch_rhel_custom_hook_url }}{{ patch_rhel_custom_hook_token }}"
+        method: POST
+        return_content: True
+        headers:
+          Content-Type: "{{ patch_rhel_custom_hook_content_type }}"
+        body: '{"text":"Host: {{ patch_rhel_report_polished }}"}'
+        body_format: "{{ patch_rhel_custom_hook_body_format }}"
+      retries: 5
+      delay: 10
+      register: result
+      until: "{{ result.status == patch_rhel_custom_hook_expected_status_code | int }}"
+      when:
+        - patch_rhel_custom_hook
+        - patch_rhel_custom_hook_url is defined
+        - patch_rhel_custom_hook_token is defined
+  delegate_to: localhost
+  become: False
+  when:
+    - patch_rhel_generate_reports | bool
+    - patch_rhel_notify_reports | bool

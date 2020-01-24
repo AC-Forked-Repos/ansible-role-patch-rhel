@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+image: ansible/ansible-runner
+
+before_script:
+  - pip install --upgrade pip
+  - pip install --upgrade ansible ansible-lint
+  # - pip install --upgrade ansible-lint
+  - ansible --version
+  - ansible-lint --version
+
+stages:
+  - ansible-lint
+  - ansible-syntax-check
+
+ansible-lint:
+  stage: ansible-lint
+  script:
+    - ansible-lint site.yml
+
+ansible-syntax-check:
+  stage: ansible-syntax-check
+  script:
+    - ansible-playbook --inventory ./inventory/ansible_hosts --syntax-check site.yml
