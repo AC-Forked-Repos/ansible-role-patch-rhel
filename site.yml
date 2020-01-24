@@ -1,0 +1,8 @@
+- hosts:
+    - all
+  become: True
+  gather_facts: True
+  roles:
+    - role: ansible-role-patch-rhel
+      patch_rhel_generate_reports: False
+      patch_rhel_notify_reports: False
