@@ -12,7 +12,7 @@ cache:
 
 before_script:
   - pip install --upgrade pip
-  - pip install --upgrade ansible ansible-lint docker docker-py molecule[docker]
+  - pip install --upgrade ansible ansible-lint docker docker-py molecule
   - ansible --version
   - ansible-lint --version
 
