@@ -1,17 +1,32 @@
 # -*- coding: utf-8 -*-
 image: ansible/ansible-runner
 
+variables:
+  GIT_DEPTH: "1"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
+
+cache:
+  paths:
+  - "$CI_PROJECT_DIR/pip-cache"
+  key: "$CI_PROJECT_ID"
+
 before_script:
   - pip install --upgrade pip
-  - pip install --upgrade ansible ansible-lint
+  - pip install --upgrade ansible ansible-lint codecovpip install codecov
   - ansible --version
   - ansible-lint --version
 
 stages:
   - ansible-lint-syntax-check
+  - ansible-molecule
 
 ansible-lint:
   stage: ansible-lint-syntax-check
   script:
     - ansible-lint site.yml
     - ansible-playbook --syntax-check site.yml
+
+ansible-molecule:
+  stage: ansible-molecule
+  script:
+    - molecule test
