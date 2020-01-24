@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: "Include ansible-role-patch-rhel"
+      include_role:
+        name: ansible-role-patch-rhel
+      vars:
+        patch_rhel_generate_reports: False
+        patch_rhel_notify_reports: False
