@@ -4,7 +4,6 @@ image: ansible/ansible-runner
 before_script:
   - pip install --upgrade pip
   - pip install --upgrade ansible ansible-lint
-  # - pip install --upgrade ansible-lint
   - ansible --version
   - ansible-lint --version
 
@@ -20,4 +19,4 @@ ansible-lint:
 ansible-syntax-check:
   stage: ansible-syntax-check
   script:
-    - ansible-playbook --inventory ./inventory/ansible_hosts --syntax-check site.yml
+    - ansible-playbook --syntax-check site.yml
