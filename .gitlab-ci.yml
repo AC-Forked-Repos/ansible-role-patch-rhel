@@ -8,15 +8,10 @@ before_script:
   - ansible-lint --version
 
 stages:
-  - ansible-lint
-  - ansible-syntax-check
+  - ansible-lint-syntax-check
 
 ansible-lint:
   stage: ansible-lint
   script:
     - ansible-lint site.yml
-
-ansible-syntax-check:
-  stage: ansible-syntax-check
-  script:
     - ansible-playbook --syntax-check site.yml
