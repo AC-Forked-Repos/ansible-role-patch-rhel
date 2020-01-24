@@ -12,7 +12,7 @@ cache:
 
 before_script:
   - pip install --upgrade pip
-  - pip install --upgrade ansible ansible-lint codecovpip install codecov
+  - pip install --upgrade ansible ansible-lint  tox setuptools docker-py 'molecule[docker]'
   - ansible --version
   - ansible-lint --version
 
