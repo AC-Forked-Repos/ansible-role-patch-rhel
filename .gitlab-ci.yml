@@ -11,7 +11,8 @@ cache:
   key: "$CI_PROJECT_ID"
 
 before_script:
-  - pip install --upgrade pip setuptools distutils
+  - pip install --upgrade pip
+  - pip install --upgrade setuptools
   - pip install --upgrade ansible ansible-lint docker docker-py molecule
   - ansible --version
   - ansible-lint --version
