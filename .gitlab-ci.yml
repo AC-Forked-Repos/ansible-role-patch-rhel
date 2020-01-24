@@ -11,7 +11,7 @@ stages:
   - ansible-lint-syntax-check
 
 ansible-lint:
-  stage: ansible-lint
+  stage: ansible-lint-syntax-check
   script:
     - ansible-lint site.yml
     - ansible-playbook --syntax-check site.yml
