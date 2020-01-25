@@ -50,6 +50,6 @@ before_script:
 molecule:
   stage: test
   script:
-    - pip3 install ansible molecule docker
+    - pip3 install ansible molecule docker docker-py
     - ansible --version
     - molecule test
