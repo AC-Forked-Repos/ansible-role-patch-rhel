@@ -1,35 +1,4 @@
 # -*- coding: utf-8 -*-
-# image: quay.io/ansible/molecule:2.20
-
-# variables:
-#   GIT_DEPTH: "1"
-#   PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
-
-# cache:
-#   paths:
-#     - "$CI_PROJECT_DIR/pip-cache"
-#   key: "$CI_PROJECT_ID"
-
-# before_script:
-#   - pip install --upgrade pip
-#   - pip install --upgrade ansible ansible-lint docker docker-py molecule
-#   - ansible --version
-#   - ansible-lint --version
-
-# stages:
-#   - ansible-lint-syntax-check
-#   - ansible-molecule
-
-# ansible-lint:
-#   stage: ansible-lint-syntax-check
-#   script:
-#     - ansible-lint site.yml
-#     - ansible-playbook --syntax-check site.yml
-
-# ansible-molecule:
-#   stage: ansible-molecule
-#   script:
-#     - molecule test
 
 image: docker:git
 
@@ -52,13 +21,15 @@ before_script:
     musl-dev libffi-dev openssl-dev openssh
   - docker info
   - python3 --version
+  - docker ps -a
 
-# stages:
-#   - molecule
+stages:
+  - molecule
 
 molecule:
   stage: test
   script:
-    - pip3 install ansible molecule docker docker-py
+    - docker ps -a
+    - pip3 install --user ansible molecule docker docker-py
     - ansible --version
     - molecule test
