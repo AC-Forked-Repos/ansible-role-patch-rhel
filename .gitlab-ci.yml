@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-image: ansible/ansible-runner
+image: quay.io/ansible/molecule:2.20
 
 variables:
   GIT_DEPTH: "1"
@@ -12,8 +12,7 @@ cache:
 
 before_script:
   - pip install --upgrade pip
-  - pip install --upgrade setuptools
-  - pip install ansible-lint docker docker-py molecule
+  - pip install --upgrade ansible ansible-lint docker docker-py molecule
   - ansible --version
   - ansible-lint --version
 
