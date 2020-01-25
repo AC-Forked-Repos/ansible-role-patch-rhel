@@ -27,6 +27,6 @@ molecule:
   stage: test
   script:
     - docker ps -a
-    - pip3 install --user ansible molecule docker docker-py
+    - pip3 install ansible molecule docker docker-py
     - ansible --version
     - molecule test
