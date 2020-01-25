@@ -22,19 +22,19 @@ before_script:
   - docker info
   - python3 --version
 
-# molecule:
-#   stage: test
-#   script:
-#     - pip3 install --upgrade pip
-#     - pip3 install ansible molecule[docker] docker
-#     - docker ps -a
-#     - ansible --version
-#     - MOLECULE_NO_LOG="false" && molecule test
-
-test:
+molecule:
   stage: test
   script:
-    - pip3 install ansible molecule docker
+    - pip3 install --upgrade pip
+    - pip3 install ansible molecule[docker] docker
+    - docker ps -a
     - ansible --version
-    - chmod +x run-tests.bash
-    - sh run-tests.bash -i -t -x python3
+    - MOLECULE_NO_LOG="false" && molecule test
+
+# test:
+#   stage: test
+#   script:
+#     - pip3 install ansible molecule docker
+#     - ansible --version
+#     - chmod +x run-tests.bash
+#     - sh run-tests.bash -i -t -x python3
