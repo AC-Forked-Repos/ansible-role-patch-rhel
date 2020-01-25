@@ -36,5 +36,5 @@ test:
   script:
     - pip3 install ansible molecule docker
     - ansible --version
-    - chmod +x testme.sh
-    - sh testme.sh -i -t -x python3
+    - chmod +x run-tests.bash
+    - sh run-tests.bash -i -t -x python3
