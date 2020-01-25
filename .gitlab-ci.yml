@@ -1,32 +1,55 @@
 # -*- coding: utf-8 -*-
-image: quay.io/ansible/molecule:2.20
+# image: quay.io/ansible/molecule:2.20
 
-variables:
-  GIT_DEPTH: "1"
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
+# variables:
+#   GIT_DEPTH: "1"
+#   PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
 
-cache:
-  paths:
-  - "$CI_PROJECT_DIR/pip-cache"
-  key: "$CI_PROJECT_ID"
+# cache:
+#   paths:
+#     - "$CI_PROJECT_DIR/pip-cache"
+#   key: "$CI_PROJECT_ID"
+
+# before_script:
+#   - pip install --upgrade pip
+#   - pip install --upgrade ansible ansible-lint docker docker-py molecule
+#   - ansible --version
+#   - ansible-lint --version
+
+# stages:
+#   - ansible-lint-syntax-check
+#   - ansible-molecule
+
+# ansible-lint:
+#   stage: ansible-lint-syntax-check
+#   script:
+#     - ansible-lint site.yml
+#     - ansible-playbook --syntax-check site.yml
+
+# ansible-molecule:
+#   stage: ansible-molecule
+#   script:
+#     - molecule test
+
+image: docker:git
+
+services:
+  - docker:dind
 
 before_script:
-  - pip install --upgrade pip
-  - pip install --upgrade ansible ansible-lint docker docker-py molecule
-  - ansible --version
-  - ansible-lint --version
+  - apk update && apk add --no-cache docker
+    python3-dev py3-pip docker gcc git curl build-base
+    autoconf automake py3-cryptography linux-headers
+    musl-dev libffi-dev openssl-dev openssh
+  - docker info
+  - python3 --version
 
-stages:
-  - ansible-lint-syntax-check
-  - ansible-molecule
+# stages:
+#   - molecule
 
-ansible-lint:
-  stage: ansible-lint-syntax-check
+molecule:
+  stage: test
   script:
-    - ansible-lint site.yml
-    - ansible-playbook --syntax-check site.yml
-
-ansible-molecule:
-  stage: ansible-molecule
-  script:
+    - pip3 install ansible molecule docker
+    - ansible --version
     - molecule test
