@@ -21,12 +21,12 @@ before_script:
     musl-dev libffi-dev openssl-dev openssh
   - docker info
   - python3 --version
-  - docker ps -a
 
 molecule:
   stage: test
   script:
+    - pip3 install --upgrade pip
+    - pip3 install ansible molecule[docker] docker-py #docker
     - docker ps -a
-    - pip3 install ansible molecule docker docker-py
     - ansible --version
     - molecule test
