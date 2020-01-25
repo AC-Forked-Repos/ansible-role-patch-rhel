@@ -23,9 +23,6 @@ before_script:
   - python3 --version
   - docker ps -a
 
-stages:
-  - molecule
-
 molecule:
   stage: test
   script:
