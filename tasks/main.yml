@@ -37,18 +37,19 @@
 # by any such package.
 - name: Remove all leaf packages
   yum:
-    autoremove: Yes
+    autoremove: true
   when:
     - patch_rhel_autoremove | bool
+
 
 - name: Determine if a reboot is required
   command: needs-restarting -r
   register: patch_rhel_needs_restarting
   changed_when:
-    - patch_rhel_needs_restarting.rc != 0
+    - patch_rhel_needs_restarting.rc != 0   # yamllint disable-line rule:truthy
   failed_when:
-    - patch_rhel_needs_restarting.rc != 1
-    - patch_rhel_needs_restarting.rc != 0
+    - patch_rhel_needs_restarting.rc != 1   # yamllint disable-line rule:truthy
+    - patch_rhel_needs_restarting.rc != 0   # yamllint disable-line rule:truthy
   become: false
 
 - name: Generate reports
