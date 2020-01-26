@@ -90,10 +90,26 @@ Example Playbook
       patch_rhel_slack_token: your_slack_token
 ```
 
+Test
+----
+
+The testing environment leverages [molecule](https://molecule.readthedocs.io/en/stable/index.html).
+To run all the tests, after installing the `molecule` requirements, execute the following command in a terminal:
+
+```bash
+molecule test
+```
+
+or
+
+```bash
+chmod +x run-tests.bash && ./run-tests.bash
+```
+
 License
 -------
 
-BSD
+[BSD-2-Clause](./LICENSE)
 
 Author Information
 ------------------
