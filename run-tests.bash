@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # @file tests
-# @brief Setup requirements and run tests, from root folder run: ./testme.sh.
+# @brief Setup requirements and run tests, from root folder run: ./run-tests.bash.
 
 # Default values.
 # Wheter to generate or not a coverage report.
