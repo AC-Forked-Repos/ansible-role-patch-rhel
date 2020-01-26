@@ -31,8 +31,10 @@
   tags:
     - skip_ansible_lint
 
-# If true, removes all "leaf" packages from the system that were originally installed as dependencies
-# of user-installed packages but which are no longer required by any such package.
+# If true, removes all "leaf" packages from the system
+# that were originally installed as dependencies
+# of user-installed packages but which are no longer required
+# by any such package.
 - name: Remove all leaf packages
   yum:
     autoremove: Yes
@@ -51,7 +53,7 @@
 
 - name: Generate reports
   block:
-    - name: Get a list of all bugzillas that are fixed for all the packages patched
+    - name: Get a list of all bugzillas that are fixed for all the packages
       command: yum updateinfo list bugzillas
       changed_when: false
       args:

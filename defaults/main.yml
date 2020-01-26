@@ -15,8 +15,7 @@ patch_rhel_autoremove: true
 patch_rhel_generate_reports: false
 patch_rhel_notify_reports: false
 
-# patch_rhel_versionlock_packages:
-  #  - <package_name>
+# patch_rhel_versionlock_packages: []
 
 patch_rhel_notify_slack: false
 # patch_rhel_slack_token: ""
