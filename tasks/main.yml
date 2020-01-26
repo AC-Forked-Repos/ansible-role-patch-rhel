@@ -11,7 +11,7 @@
 - name: Honour package version pinning via yum-plugin-versionlock
   command: yum versionlock {{ package }}
   args:
-    warn: False
+    warn: false
   loop: "{{ patch_rhel_versionlock_packages }}"
   loop_control:
     loop_var: package
@@ -24,47 +24,50 @@
     name: "*"
     state: latest
     exclude: "{{ patch_rhel_exclude_list | default('') }}"
-    update_cache: "{{ patch_rhel_update_cache | bool | default(True) }}"
-    security: "{{ patch_rhel_security | bool | default(True) }}"
-    bugfix: "{{ patch_rhel_bugfix | bool | default(True) }}"
+    update_cache: "{{ patch_rhel_update_cache | bool | default(true) }}"
+    security: "{{ patch_rhel_security | bool | default(true) }}"
+    bugfix: "{{ patch_rhel_bugfix | bool | default(true) }}"
   register: patch_rhel_packages_patched
   tags:
     - skip_ansible_lint
 
-# If True, removes all "leaf" packages from the system that were originally installed as dependencies
-# of user-installed packages but which are no longer required by any such package.
+# If true, removes all "leaf" packages from the system
+# that were originally installed as dependencies
+# of user-installed packages but which are no longer required
+# by any such package.
 - name: Remove all leaf packages
   yum:
-    autoremove: Yes
+    autoremove: true
   when:
     - patch_rhel_autoremove | bool
+
 
 - name: Determine if a reboot is required
   command: needs-restarting -r
   register: patch_rhel_needs_restarting
   changed_when:
-    - patch_rhel_needs_restarting.rc != 0
+    - patch_rhel_needs_restarting.rc != 0   # yamllint disable-line rule:truthy
   failed_when:
-    - patch_rhel_needs_restarting.rc != 1
-    - patch_rhel_needs_restarting.rc != 0
-  become: False
+    - patch_rhel_needs_restarting.rc != 1   # yamllint disable-line rule:truthy
+    - patch_rhel_needs_restarting.rc != 0   # yamllint disable-line rule:truthy
+  become: false
 
 - name: Generate reports
   block:
-    - name: Get a list of all bugzillas that are fixed for all the packages patched
+    - name: Get a list of all bugzillas that are fixed for all the packages
       command: yum updateinfo list bugzillas
-      changed_when: False
+      changed_when: false
       args:
-        warn: False
+        warn: false
       register: patch_rhel_updateinfo_list_bugzillas
 
     - name: Get a summary of advisories not yet installed
       command: yum updateinfo summary
-      changed_when: False
+      changed_when: false
       args:
-        warn: False
+        warn: false
       register: patch_rhel_updateinfo_summary
-  become: False
+  become: false
   when:
     - patch_rhel_generate_reports | bool
 
@@ -120,7 +123,7 @@
       uri:
         url: "{{ patch_rhel_custom_hook_url }}{{ patch_rhel_custom_hook_token }}"
         method: POST
-        return_content: True
+        return_content: true
         headers:
           Content-Type: "{{ patch_rhel_custom_hook_content_type }}"
         body: '{"text":"Host: {{ patch_rhel_report_polished }}"}'
@@ -134,7 +137,7 @@
         - patch_rhel_custom_hook_url is defined
         - patch_rhel_custom_hook_token is defined
   delegate_to: localhost
-  become: False
+  become: false
   when:
     - patch_rhel_generate_reports | bool
     - patch_rhel_notify_reports | bool

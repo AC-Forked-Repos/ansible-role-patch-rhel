@@ -34,7 +34,7 @@ tests/test_plugins
 
 # virtualenv
 .env
-.yamllint
+# .yamllint
 
 # mac osx
 .DS_Store
