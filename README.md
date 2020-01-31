@@ -1,5 +1,6 @@
 Ansible Role Patch RHEL
 =======================
+
 [![pipeline status](https://gitlab.com/hyperd/ansible-role-patch-rhel/badges/master/pipeline.svg)](https://gitlab.com/hyperd/ansible-role-patch-rhel/commits/master)
 
 This Ansible Role enables to patch RHEL based (e.g., Red Hat Linux Fedora, and CentOS) systems.
